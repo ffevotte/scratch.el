@@ -1,4 +1,4 @@
-# scratch [![Coverage Status](https://coveralls.io/repos/ffevotte/scratch.el/badge.svg?branch=master&service=github)](https://coveralls.io/github/ffevotte/scratch.el?branch=master)
+# scratch [![Build Status](https://travis-ci.org/ffevotte/scratch.el.svg)](https://travis-ci.org/ffevotte/scratch.el) [![Coverage Status](https://coveralls.io/repos/ffevotte/scratch.el/badge.svg?branch=master&service=github)](https://coveralls.io/github/ffevotte/scratch.el?branch=master)
 
 `scratch` is an Emacs extension helping deal with "scratch" buffers, i.e. buffers whose content is mostly ephemeral, but still valuable enough that we don't want to risk killing them inadvertently.
 
