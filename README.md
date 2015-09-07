@@ -16,18 +16,18 @@ Just clone the repository somewhere and `require` the package in your init file:
 
 ### Setup
 
-Simply bind `scratch/switch-to-buffer` (and optionally `scratch/create`) to some keys of your choice. `scratch/switch-to-buffer` is meant to be used as a drop in replacement for `switch-to-buffer` (or its ido counterpart), and should therefore be bound to something like <kbd>C-x</kbd><kbd>b</kbd>.
+Simply bind `scratch-switch-to-buffer` (and optionally `scratch-create`) to some keys of your choice. `scratch-switch-to-buffer` is meant to be used as a drop in replacement for `switch-to-buffer` (or its ido counterpart), and should therefore be bound to something like <kbd>C-x</kbd><kbd>b</kbd>.
 
 ```elisp
-(global-set-key (kbd "C-x b") #'scratch/switch-to-buffer)
-(global-set-key (kbd "C-x B") #'scratch/create)
+(global-set-key (kbd "C-x b") #'scratch-switch-to-buffer)
+(global-set-key (kbd "C-x B") #'scratch-create)
 ```
 
 ### Usage
 
-- `scratch/switch-to-buffer` and `scratch/pop-to-buffer` behave similarly to their non-namespaced counterparts, except when providing the name of a non-existent buffer. In such cases, a new buffer is created and put in `scratch-mode` (see more about what this implies below).<br/>As a special case, if the buffer name argument is left blank, the `*scratch*` buffer is selected by default.
+- `scratch-switch-to-buffer` and `scratch-pop-to-buffer` behave similarly to their non-namespaced counterparts, except when providing the name of a non-existent buffer. In such cases, a new buffer is created and put in `scratch-mode` (see more about what this implies below).<br/>As a special case, if the buffer name argument is left blank, the `*scratch*` buffer is selected by default.
 
-- `scratch/create` always creates a new scratch buffer. When called without argument, the buffer name defaults to `*scratch*<N>`. With a prefix argument, a buffer name is prompted for in the minibuffer.
+- `scratch-create` always creates a new scratch buffer. When called without argument, the buffer name defaults to `*scratch*<N>`. With a prefix argument, a buffer name is prompted for in the minibuffer.
 
 With the configuration described above, here is how a few operations on scratch buffers might be achieved:
 
