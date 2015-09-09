@@ -11,16 +11,19 @@
 
 (add-to-list 'load-path scratch-root-path)
 
+(require 'undercover)
+(undercover "*.el")
+
 (require 'scratch)
 (require 'espuds)
 (require 'ert)
 (require 'cl)
 
+
 (Setup
  (setq use-dialog-box nil))
 
-(Before
- )
+(Before)
 
 (After
  ;; After each scenario is run
