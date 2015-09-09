@@ -1,4 +1,4 @@
 
 
 check:
-	cask exec ert-runner
+	cask exec ecukes --no-win
