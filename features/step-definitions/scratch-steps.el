@@ -29,29 +29,40 @@
       (lambda (name)
         (funcall (intern name) +1)))
 
+(defmacro scratch-test--with-mocks (&rest body)
+  `(progn
+     (setq scratch-test--ask  nil
+           scratch-test--exit nil
+           scratch-test--save nil)
+     (letf (((symbol-function 'yes-or-no-p)
+             (lambda (&rest args)
+               (setq scratch-test--ask 'yes-or-no-p)
+               t))
+            ((symbol-function 'read-event)
+             (lambda (&rest args)
+               (setq scratch-test--ask 'read-event)
+               (throw 'scratch-test t)))
+            ((symbol-function 'save-buffer)
+             (lambda (&rest args)
+               (interactive)
+               (ignore
+                (setq scratch-test--save t))))
+            ((symbol-function 'kill-emacs)
+             (lambda (&rest args)
+               (setq scratch-test--exit 'kill-emacs)
+               (throw 'scratch-test t))))
+       (catch 'scratch-test
+         ,@body))))
+
 (When "^I kill the current buffer$"
       (lambda ()
-        (setq scratch-test--ask nil)
-        (letf (((symbol-function 'yes-or-no-p)
-                (lambda (&rest args)
-                  (setq scratch-test--ask 'yes-or-no-p)
-                  (throw 'scratch-test t))))
-          (catch 'scratch-test
-            (kill-buffer (current-buffer))))))
+        (scratch-test--with-mocks
+         (kill-buffer (current-buffer)))))
 
 (When "^I exit emacs$"
       (lambda ()
-        (setq scratch-test--ask nil)
-        (letf (((symbol-function 'read-event)
-                (lambda (&rest args)
-                  (setq scratch-test--ask 'read-event)
-                  (throw 'scratch-test t)))
-               ((symbol-function 'kill-emacs)
-                (lambda (&rest args)
-                  (setq scratch-test--exit 'kill-emacs)
-                  (throw 'scratch-test t))))
-          (catch 'scratch-test
-            (save-buffers-kill-terminal)))))
+        (scratch-test--with-mocks
+         (save-buffers-kill-terminal))))
 
 (Then "^\"\\(.+\\)\" should be active$"
       (lambda (mode)
@@ -81,3 +92,19 @@
         (cl-assert (null scratch-test--ask) nil
                    "Expected `scratch-test--ask' to be nil, found `%s'."
                    scratch-test--ask)))
+
+(Then "^Emacs should exit$"
+      (lambda ()
+        (cl-assert scratch-test--exit nil
+                   "Expected `scratch-test--exit' to be non-nil.")))
+
+(Then "^Emacs should not exit$"
+      (lambda ()
+        (cl-assert (null scratch-test--exit) nil
+                   "Expected `scratch-test--exit' to be nil, found `%s'."
+                   scratch-test--exit)))
+
+(Then "^The buffer should be saved to disk$"
+      (lambda ()
+        (cl-assert scratch-test--save nil
+                   "Expected `scratch-test--save' to be non-nil.")))
