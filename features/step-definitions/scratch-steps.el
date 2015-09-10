@@ -6,14 +6,7 @@
        (lambda (key fn-name)
          (global-set-key (kbd key) (intern fn-name))))
 
-(Given "^Buffer \"\\(.+\\)\" does not exist$"
-       (lambda (name)
-         (let ((buffer (get-buffer name)))
-           (when buffer
-             (with-current-buffer buffer (scratch-mode -1))
-             (kill-buffer buffer)))))
-
-(Given "^I kill all buffers$"
+(Given "^No buffers are open$"
        (lambda ()
          (switch-to-buffer "*Messages*")
          (mapc (lambda (buffer)
@@ -24,37 +17,41 @@
                    (kill-buffer buffer)))
                (buffer-list))))
 
-(Given "^I create a new buffer$"
-       (lambda ()
-         (switch-to-buffer "foo")))
+(When "^I write the buffer to \"\\([^\"]+\\)\"$"
+      (lambda (name)
+        (write-file name)))
 
-(Given "^I activate \"\\(.+\\)\"$"
-       (lambda (name)
-         (funcall (intern name) +1)))
+(When "^I create a new buffer$"
+      (lambda ()
+        (switch-to-buffer "foo")))
 
-(Given "^I kill the current buffer$"
-       (lambda ()
-         (setq scratch-test--ask nil)
-         (letf (((symbol-function 'yes-or-no-p)
-                 (lambda (&rest args)
-                   (setq scratch-test--ask 'yes-or-no-p)
-                   (throw 'scratch-test t))))
-           (catch 'scratch-test
-             (kill-buffer (current-buffer))))))
+(When "^I activate \"\\(.+\\)\"$"
+      (lambda (name)
+        (funcall (intern name) +1)))
 
-(Given "^I exit emacs$"
-       (lambda ()
-         (setq scratch-test--ask nil)
-         (letf (((symbol-function 'read-event)
-                 (lambda (&rest args)
-                   (setq scratch-test--ask 'read-event)
-                   (throw 'scratch-test t)))
-                ((symbol-function 'kill-emacs)
-                 (lambda (&rest args)
-                   (setq scratch-test--exit 'kill-emacs)
-                   (throw 'scratch-test t))))
-           (catch 'scratch-test
-             (save-buffers-kill-terminal)))))
+(When "^I kill the current buffer$"
+      (lambda ()
+        (setq scratch-test--ask nil)
+        (letf (((symbol-function 'yes-or-no-p)
+                (lambda (&rest args)
+                  (setq scratch-test--ask 'yes-or-no-p)
+                  (throw 'scratch-test t))))
+          (catch 'scratch-test
+            (kill-buffer (current-buffer))))))
+
+(When "^I exit emacs$"
+      (lambda ()
+        (setq scratch-test--ask nil)
+        (letf (((symbol-function 'read-event)
+                (lambda (&rest args)
+                  (setq scratch-test--ask 'read-event)
+                  (throw 'scratch-test t)))
+               ((symbol-function 'kill-emacs)
+                (lambda (&rest args)
+                  (setq scratch-test--exit 'kill-emacs)
+                  (throw 'scratch-test t))))
+          (catch 'scratch-test
+            (save-buffers-kill-terminal)))))
 
 (Then "^\"\\(.+\\)\" should be active$"
       (lambda (mode)

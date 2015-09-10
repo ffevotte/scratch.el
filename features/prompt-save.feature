@@ -1,31 +1,31 @@
 Feature: Prompt to save scratch buffers
 
-  Scenario: kill scratch buffer
-    Given I kill all buffers
-    And   I create a new buffer
-    And   I activate "scratch-mode"
-    And   I type "foo"
-    And   I kill the current buffer
-    Then  I should be prompted to save the buffer
-
-  Scenario: kill non-scratch buffer
-    Given I kill all buffers
-    And   I create a new buffer
-    And   I type "foo"
+  Scenario: Kill a non-scratch buffer => no prompt
+    Given No buffers are open
+    When  I create a new buffer
+    And   I type "some modifications"
     And   I kill the current buffer
     Then  I should not be prompted to save the buffer
 
-  Scenario: exit emacs with modified scratch buffer
-    Given I kill all buffers
-    And   I create a new buffer
+  Scenario: Kill a scratch buffer => prompt to save
+    Given No buffers are open
+    When  I create a new buffer
     And   I activate "scratch-mode"
-    And   I type "foo"
-    And   I exit emacs
+    And   I type "some modifications"
+    And   I kill the current buffer
     Then  I should be prompted to save the buffer
 
-  Scenario: exit emacs with modified non-scratch buffer
-    Given I kill all buffers
-    And   I create a new buffer
-    And   I type "foo"
+  Scenario: exit emacs with a modified non-scratch buffer => no prompt
+    Given No buffers are open
+    When  I create a new buffer
+    And   I type "some modifications"
     And   I exit emacs
     Then  I should not be prompted to save the buffer
+
+  Scenario: Exit emacs with modified scratch buffer => prompt to save
+    Given No buffers are open
+    When  I create a new buffer
+    And   I activate "scratch-mode"
+    And   I type "some modifications"
+    And   I exit emacs
+    Then  I should be prompted to save the buffer
